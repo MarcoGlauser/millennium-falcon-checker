@@ -1,5 +1,5 @@
-requests
-beautifulsoup4
-huey
-redis
-pushbullet.py
+requests==2.18.4
+beautifulsoup4==4.6.0
+huey==1.7.0
+redis==2.10.6
+pushbullet.py==0.11.0
