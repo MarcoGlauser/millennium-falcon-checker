@@ -16,7 +16,7 @@ huey = RedisHuey('millenium-falcon-checker', host=redis_host, port=redis_port, d
 pb = Pushbullet(pushbullet_api_key)
 
 
-@huey.periodic_task(crontab(minute='*'))
+@huey.periodic_task(crontab(minute='*/30'))
 def check_status():
     millenium_falcon_response = requests.get(url)
     try:
