@@ -3,7 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 from huey import RedisHuey, crontab
 from pushbullet import Pushbullet
-from redis import StrictRedis
+from redis import StrictRedis, BlockingConnectionPool
 
 url = os.getenv('URL', 'https://shop.lego.com/en-CH/Millennium-Falcon-75192')
 redis_host = os.getenv('REDIS_HOST', 'localhost')
@@ -11,8 +11,9 @@ redis_port = os.getenv('REDIS_PORT', 6379)
 redis_db = os.getenv('REDIS_DB', 0)
 pushbullet_api_key = os.getenv('PUSHBULLET_API_KEY', '')
 
-redis = StrictRedis(host=redis_host, port=redis_port, db=redis_db)
-huey = RedisHuey('millenium-falcon-checker', host=redis_host, port=redis_port, db=redis_db)
+pool = BlockingConnectionPool(host=redis_host, port=redis_port, db=redis_db, max_connections=5)
+redis = StrictRedis(connection_pool=pool)
+huey = RedisHuey('millenium-falcon-checker', connection_pool=pool)
 pb = Pushbullet(pushbullet_api_key)
 
 
