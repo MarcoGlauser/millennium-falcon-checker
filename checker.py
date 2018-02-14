@@ -11,7 +11,7 @@ redis_port = os.getenv('REDIS_PORT', 6379)
 redis_db = os.getenv('REDIS_DB', 0)
 pushbullet_api_key = os.getenv('PUSHBULLET_API_KEY', '')
 
-pool = BlockingConnectionPool(host=redis_host, port=redis_port, db=redis_db, max_connections=5)
+pool = BlockingConnectionPool(host=redis_host, port=redis_port, db=redis_db)
 redis = StrictRedis(connection_pool=pool)
 huey = RedisHuey('millenium-falcon-checker', connection_pool=pool)
 pb = Pushbullet(pushbullet_api_key)
