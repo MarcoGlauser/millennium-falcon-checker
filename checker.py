@@ -13,22 +13,22 @@ pushbullet_api_key = os.getenv('PUSHBULLET_API_KEY', '')
 
 pool = BlockingConnectionPool(host=redis_host, port=redis_port, db=redis_db)
 redis = StrictRedis(connection_pool=pool)
-huey = RedisHuey('millenium-falcon-checker', connection_pool=pool)
+huey = RedisHuey('millennium-falcon-checker', connection_pool=pool)
 pb = Pushbullet(pushbullet_api_key)
 
 
 @huey.periodic_task(crontab(minute='*/30'))
 def check_status():
-    millenium_falcon_response = requests.get(url)
+    millennium_falcon_response = requests.get(url)
     try:
-        millenium_falcon_response.raise_for_status()
-        soup = BeautifulSoup(millenium_falcon_response.content, 'html.parser')
+        millennium_falcon_response.raise_for_status()
+        soup = BeautifulSoup(millennium_falcon_response.content, 'html.parser')
         if is_available(soup):
-            print(' Millenium Falcon is available')
-            send_push_if_necessary("Millenium Falcon Available!!!!", "GET IT NAU")
+            print(' Millennium Falcon is available')
+            send_push_if_necessary("Millennium Falcon Available!!!!", "GET IT NAU")
         elif is_unavailable(soup):
             print('Still out of stock')
-            redis.set('millenium-falcon-available', False)
+            redis.set('millennium-falcon-available', False)
         else:
             print('Something changed you better have a look.')
             send_push_if_necessary('Something changed in the LEGO Shop')
@@ -45,7 +45,7 @@ def is_unavailable(soup):
 
 
 def send_push_if_necessary(title, text=''):
-    redis_key = 'millenium-falcon-available'
+    redis_key = 'millennium-falcon-available'
     if not redis.get(redis_key):
         pb.push_note(title, text)
         redis.set(redis_key, True)

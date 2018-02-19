@@ -1,4 +1,4 @@
-# Millenium Falcon Checker
+# Millennium Falcon Checker
 The purpose of this little project is to regularly check the LEGO online shop and
 detect then the LEGO UCS Millennium Falcon is in stock.
 When it is back in stock it sends a pushbullet notification.
@@ -21,7 +21,7 @@ The environment variable PUSHBULLET_API_KEY is required.
 
 ## Docker
 You can also run it with docker.
-The image is available at Dockerhub mglauser/millenium-falcon-checker.
+The image is available at Dockerhub mglauser/millennium-falcon-checker.
 
 Beware that when you link redis you have to set the environment variable REDIS_PORT.
 Otherwise it will use the environment variable of the redis container.
@@ -35,5 +35,5 @@ huey_consumer checker.huey
 
 ### Docker
 ```
-docker run -e PUSHBULLET_API_KEY=1234 -e REDIS_HOST=someredis.host -d mglauser/millenium-falcon-checker:latest
+docker run -e PUSHBULLET_API_KEY=1234 -e REDIS_HOST=someredis.host -d mglauser/millennium-falcon-checker:latest
 ```
