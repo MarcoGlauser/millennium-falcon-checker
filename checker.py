@@ -15,8 +15,14 @@ pushbullet_api_key = os.getenv('PUSHBULLET_API_KEY', '')
 
 pool = BlockingConnectionPool(host=redis_host, port=redis_port, db=redis_db)
 redis = StrictRedis(connection_pool=pool)
-
+huey = RedisHuey('millennium-falcon-checker', connection_pool=pool)
 pb = Pushbullet(pushbullet_api_key)
+
+
+@huey.periodic_task(crontab(minute='*/30'))
+def check_status_task():
+    check_status()
+
 
 def check_status():
     millennium_falcon_response = requests.get(url)
@@ -53,9 +59,3 @@ def send_push_if_necessary(title, text=''):
 
 if __name__ == '__main__':
     check_status()
-else:
-    huey = RedisHuey('millennium-falcon-checker', connection_pool=pool)
-
-    @huey.periodic_task(crontab(minute='*/30'))
-    def check_status_task():
-        check_status()
