@@ -1,4 +1,6 @@
 import os
+
+import pickle
 import requests
 from bs4 import BeautifulSoup
 from huey import RedisHuey, crontab
@@ -13,11 +15,9 @@ pushbullet_api_key = os.getenv('PUSHBULLET_API_KEY', '')
 
 pool = BlockingConnectionPool(host=redis_host, port=redis_port, db=redis_db)
 redis = StrictRedis(connection_pool=pool)
-huey = RedisHuey('millennium-falcon-checker', connection_pool=pool)
+
 pb = Pushbullet(pushbullet_api_key)
 
-
-@huey.periodic_task(crontab(minute='*/30'))
 def check_status():
     millennium_falcon_response = requests.get(url)
     try:
@@ -28,7 +28,7 @@ def check_status():
             send_push_if_necessary("Millennium Falcon Available!!!!", "GET IT NAU")
         elif is_unavailable(soup):
             print('Still out of stock')
-            redis.set('millennium-falcon-available', False)
+            redis.set('millennium-falcon-available', pickle.dumps(False))
         else:
             print('Something changed you better have a look.')
             send_push_if_necessary('Something changed in the LEGO Shop')
@@ -46,7 +46,16 @@ def is_unavailable(soup):
 
 def send_push_if_necessary(title, text=''):
     redis_key = 'millennium-falcon-available'
-    if not redis.get(redis_key):
+    if not pickle.loads(redis.get(redis_key)):
         pb.push_note(title, text)
-        redis.set(redis_key, True)
+        redis.set(redis_key, pickle.dumps(True))
 
+
+if __name__ == '__main__':
+    check_status()
+else:
+    huey = RedisHuey('millennium-falcon-checker', connection_pool=pool)
+
+    @huey.periodic_task(crontab(minute='*/30'))
+    def check_status_task():
+        check_status()
